@@ -26,7 +26,7 @@ RUN    apt-get update \
         && rm -rf /tmp/dependencies
 
 # TODO: plugins (later)
-# && unzip -oq "/tmp/dependencies/JMeterPlugins-*.zip" -d $JMETER_HOME
+# && unzip -oq "plugins/jpgc-cmd-2.2.zip" -d $JMETER_HOME
 
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN
