@@ -26,13 +26,13 @@ RUN    apt-get update \
         && rm -rf /tmp/dependencies
 
 # TODO: plugins (later)
-# TODO: plugins (later)
+#RUN    ls /opt/java/openjdk
 COPY plugins/jpgc-cmd-2.2.zip /opt
 RUN     unzip -oq "/opt/jpgc-cmd-2.2.zip" -d $JMETER_HOME
 
 
 # Set global PATH such that "jmeter" command is found
-ENV PATH $PATH:$JMETER_BIN
+ENV PATH $PATH:$JMETER_BIN:/opt/java/openjdk/bin
 
 #WORKDIR        ${JMETER_HOME}
 
@@ -42,3 +42,6 @@ RUN set -o errexit -o nounset \
 
 RUN echo "Testing Jmeter version" \
     && jmeter -v
+
+RUN echo "Testing Java version" \
+    && java -version
