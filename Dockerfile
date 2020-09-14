@@ -29,7 +29,7 @@ RUN    apt-get update \
 #RUN    ls /opt/java/openjdk
 COPY plugins/jpgc-cmd-2.2.zip /opt
 RUN     unzip -oq "/opt/jpgc-cmd-2.2.zip" -d $JMETER_HOME
-
+RUN chmod +x $JMETER_HOME/bin/JMeterPluginsCMD.sh
 
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN:/opt/java/openjdk/bin
