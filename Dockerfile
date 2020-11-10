@@ -5,6 +5,8 @@ MAINTAINER Ronnie Huang <RonnieHuang@outlook.com>
 USER root
 
 ARG JMETER_VERSION="5.2.1"
+ARG JMETER_PLUGINS_MANAGER_VERSION='1.4'
+ARG CMDRUNNER_VERSION='2.2'
 ENV JMETER_HOME /opt/apache-jmeter-${JMETER_VERSION}
 ENV     JMETER_BIN      ${JMETER_HOME}/bin
 ENV     JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
@@ -28,11 +30,6 @@ RUN    apt-get update \
 # TODO: plugins (later)
 #RUN    ls /opt/java/openjdk
 
-COPY plugins/*.zip /opt/
-RUN unzip -oq "/opt/jpgc-cmd-2.2.zip" -d $JMETER_HOME
-RUN unzip -oq "/opt/jpgc-graphs-basic-2.0.zip" -d $JMETER_HOME
-RUN chmod +x $JMETER_HOME/bin/JMeterPluginsCMD.sh
-
 # Set global PATH such that "jmeter" command is found
 ENV PATH $PATH:$JMETER_BIN:/opt/java/openjdk/bin
 
@@ -47,3 +44,19 @@ RUN echo "Testing Jmeter version" \
 
 RUN echo "Testing Java version" \
     && java -version
+
+RUN cd /tmp/ \
+ && curl --location --silent --show-error --output ${JMETER_HOME}/lib/ext/jmeter-plugins-manager-${JMETER_PLUGINS_MANAGER_VERSION}.jar http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/${JMETER_PLUGINS_MANAGER_VERSION}/jmeter-plugins-manager-${JMETER_PLUGINS_MANAGER_VERSION}.jar \
+ && curl --location --silent --show-error --output ${JMETER_HOME}/lib/cmdrunner-${CMDRUNNER_VERSION}.jar http://search.maven.org/remotecontent?filepath=kg/apc/cmdrunner/${CMDRUNNER_VERSION}/cmdrunner-${CMDRUNNER_VERSION}.jar \
+ && java -cp ${JMETER_HOME}/lib/ext/jmeter-plugins-manager-${JMETER_PLUGINS_MANAGER_VERSION}.jar org.jmeterplugins.repository.PluginManagerCMDInstaller \
+ && PluginsManagerCMD.sh install \
+jpgc-jmxmon=0.3,\
+jpgc-json=2.7,\
+jpgc-perfmon=2.1,\
+jpgc-xml=0.1,\
+tilln-iso8583=1.1,\
+tilln-sshmon=1.2,\
+tilln-wssecurity=1.7,\
+ && PluginsManagerCMD.sh status \
+ && chmod +x ${JMETER_HOME}/bin/*.sh \
+ && rm -fr /tmp/*
