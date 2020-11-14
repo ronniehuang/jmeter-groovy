@@ -27,7 +27,6 @@ RUN    apt-get update \
         && tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt  \
         && rm -rf /tmp/dependencies
 
-# TODO: plugins (later)
 #RUN    ls /opt/java/openjdk
 
 # Set global PATH such that "jmeter" command is found
@@ -45,6 +44,7 @@ RUN echo "Testing Jmeter version" \
 RUN echo "Testing Java version" \
     && java -version
 
+# jmeter plugins
 RUN cd /tmp/ \
  && curl --location --silent --show-error --output ${JMETER_HOME}/lib/ext/jmeter-plugins-manager-${JMETER_PLUGINS_MANAGER_VERSION}.jar http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/${JMETER_PLUGINS_MANAGER_VERSION}/jmeter-plugins-manager-${JMETER_PLUGINS_MANAGER_VERSION}.jar \
  && curl --location --silent --show-error --output ${JMETER_HOME}/lib/cmdrunner-${CMDRUNNER_VERSION}.jar http://search.maven.org/remotecontent?filepath=kg/apc/cmdrunner/${CMDRUNNER_VERSION}/cmdrunner-${CMDRUNNER_VERSION}.jar \
@@ -60,3 +60,11 @@ tilln-wssecurity=1.7,\
  && PluginsManagerCMD.sh status \
  && chmod +x ${JMETER_HOME}/bin/*.sh \
  && rm -fr /tmp/*
+
+# use sh to launch if master or agent
+COPY scripts/launch.sh ${JMETER_INSTALL}
+RUN chmod 0755 ${JMETER_INSTALL}/launch.sh
+
+EXPOSE 60000 1099 50000
+
+ENTRYPOINT ["/opt/launch.sh"]
