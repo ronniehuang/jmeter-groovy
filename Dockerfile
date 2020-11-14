@@ -62,8 +62,8 @@ tilln-wssecurity=1.7,\
  && rm -fr /tmp/*
 
 # use sh to launch if master or agent
-COPY scripts/launch.sh ${JMETER_INSTALL}
-RUN chmod 0755 ${JMETER_INSTALL}/launch.sh
+COPY scripts/launch.sh ${JMETER_BIN}
+RUN chmod 0755 ${JMETER_BIN}/launch.sh
 
 EXPOSE 60000 1099 50000
 
